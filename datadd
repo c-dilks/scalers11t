@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# adds together dat files from same run, since there are multiple
+# dat files for each run, only identified by unixtime
+
+board=12
+
+pushd datfiles
+ls *.dat | sort > files
+mkdir -p orig
+mv run*.dat orig/
+
+runtmp=0
+
+> new.dat
+while read line; do
+  run=$(echo $line | cut -c4-11)
+  echo $run
+  if [ $runtmp -eq 0 -o $runtmp -ne $run ]; then 
+    cp orig/$line run${run}_${board}.dat
+    runtmp=$run
+  elif [ $runtmp -eq $run ]; then
+    while read nums; do
+      bx=$(echo $nums | awk '{print $1}')
+      let bx++
+      new_nums[$bx]="$nums"
+    done < orig/$line
+    while read nums; do
+      bx=$(echo $nums | awk '{print $1}')
+      let bx++
+      acc_nums[$bx]="$nums"
+    done < run${run}_${board}.dat
+    for i in $(seq 1 ${#acc_nums[@]}); do
+      let bx=$i-1
+      iter=1
+      for word in ${acc_nums[$i]}; do
+        acc[$iter]=$word
+        let iter++
+      done
+      iter=1
+      for word in ${new_nums[$i]}; do
+        new[$iter]=$word
+        let iter++
+      done
+      add="$bx"
+      for j in $(seq 2 ${#acc[@]}); do
+        nxt=$(echo "${acc[$j]}+${new[$j]}" | bc)
+        add="$add $nxt"
+      done
+      echo $add >> new.dat
+    done
+    mv new.dat run${run}_${board}.dat
+  fi
+done < files
+rm files
+popd
+
+
+

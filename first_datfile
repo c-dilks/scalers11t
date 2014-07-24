@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# copies all datfiles to datfiles/extras, and pulls only the first scaler file
+# for each run, storing it in datfiles/
+
+pushd datfiles
+
+ls *.dat | sort > files
+mkdir -p extras
+
+runtmp=0
+while read line; do
+  run=$(echo $line | cut -c4-11)
+  echo $run
+  if [ $run -eq $runtmp ]; then
+    mv $line extras/
+  else
+    cp $line extras/
+    mv $line run${run}_12.dat
+    runtmp=$run
+  fi
+done < files
+
+rm files
+popd
