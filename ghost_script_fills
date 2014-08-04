@@ -11,7 +11,7 @@ cat files
 
 # concatenation
 while read line; do
-  gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$line 16*/$line
+  gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$line 15*/$line
   echo "$line concatenated"
 done < files
 rm files

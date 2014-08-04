@@ -26,6 +26,11 @@
  *                 if >0 --> plot only run no. "specificFill"
  *
  *                 note: if both specificFill and specificRun>0, code will exit
+ *
+ * WE DON'T HAVE VPDE OR VPDW FOR THIS RUNNING PERIOD; 
+ * furthermore, some runs had zero VPDX counts *
+ * search the comments for "VPDX" to find out all the adjustments that needed to be made
+ * (alternatively, see log entry 14.07.30)
  *                  
  */
 
@@ -332,6 +337,7 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
 
 
   // accidentals and multiples corrections
+  // -- VPD only has multiples corrections, since only VPDX is available
   Double_t nn[3][3][5]; // scaled counts     [tbit] [cbit] [sbit]
   Double_t pp[3][3][5]; // physical process probabilities
   Double_t aa[3][3][5]; // counts corrected for accidentals (stage 1)
@@ -350,14 +356,24 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
         {
           nn[t][c][s] = raw_d[t][c][s]->GetBinContent(b);
         };
-        // only compute corrections for nonzero counts
-        if(tt[s]>0 && nn[t][0][s]>0 && nn[t][1][s]>0 && nn[t][2][s]>0)
+        // only compute corrections for nonzero counts; vpd only considers VPDX
+        if((tt[s]>0 && nn[t][0][s]>0 && nn[t][1][s]>0 && nn[t][2][s]>0) ||
+           (t==2 && tt[s]>0 && nn[t][2][s]>0))
         {
           // compute physical process probabilities
-          pp[t][0][s] = (nn[t][0][s] - nn[t][2][s]) / (tt[s] - nn[t][1][s]);
-          pp[t][1][s] = (nn[t][1][s] - nn[t][2][s]) / (tt[s] - nn[t][0][s]);
+          if(t!=2)
+          {
+            pp[t][0][s] = (nn[t][0][s] - nn[t][2][s]) / (tt[s] - nn[t][1][s]);
+            pp[t][1][s] = (nn[t][1][s] - nn[t][2][s]) / (tt[s] - nn[t][0][s]);
+          }
+          else
+          {
+            pp[t][0][s] = 0;
+            pp[t][1][s] = 0;
+          };
           pp[t][2][s] = (nn[t][2][s] - (nn[t][0][s]*nn[t][1][s])/tt[s]) /
                         (tt[s] + nn[t][2][s] - nn[t][0][s] - nn[t][1][s]);
+
           // compute accidentals and multiples corrections and fill corrected dists
           for(Int_t c=0; c<3; c++)
           {
@@ -365,11 +381,13 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
             mm[t][c][s] = -1 * tt[s] * log(1 - pp[t][c][s]);
             if(nn[t][c][s]>0) ff[t][c][s] = mm[t][c][s] / nn[t][c][s];
             else ff[t][c][s] = 0;
+            if(t==2 && c==2 && ff[t][c][s]<0.3) print("------------ff=%f\n",ff[t][c][s]);
             acc_d[t][c][s]->SetBinContent(b,aa[t][c][s]);
             mul_d[t][c][s]->SetBinContent(b,mm[t][c][s]);
             fac_d[t][c][s]->SetBinContent(b,ff[t][c][s]);
           };
-        };
+        }
+        else if(t==2) fac_d[t][2][s]->SetBinContent(b,1); // set VPDX fac to 1 if no VPDX counts 
       };
     };
   };
@@ -438,6 +456,8 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
           };
 
           // rellum uncertainty propagation -- FORMULA
+          // for VPDX, sometimes there are zero counts; I set the error bars
+          // for these instances equal to 0.2
           if(LL[0]*LL[1]*LL[2]*LL[3]>0)
           {
             if(r==1)
@@ -454,7 +474,9 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
             else if(r==9) unc = sqrt( ( LL[3] * (LL[1]+LL[3])) / pow(LL[1], 3));
 
             err_d[t][c][r]->SetBinContent(b,unc);
-          };
+          }
+          else if(t==2 && c==2) err_d[t][c][r]->SetBinContent(b,0.2);
+
         };
       };
     };
@@ -469,26 +491,51 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
   {
     for(Int_t c=0; c<3; c++)
     {
-      raw_d[t][c][0]->SetLineColor(kGreen+2);
-      raw_d[t][c][1]->SetLineColor(kOrange+7);
-      raw_d[t][c][2]->SetLineColor(kRed);
-      raw_d[t][c][3]->SetLineColor(kBlue);
-      raw_d[t][c][4]->SetLineColor(kBlack);
-      acc_d[t][c][0]->SetLineColor(kGreen+2);
-      acc_d[t][c][1]->SetLineColor(kOrange+7);
-      acc_d[t][c][2]->SetLineColor(kRed);
-      acc_d[t][c][3]->SetLineColor(kBlue);
-      acc_d[t][c][4]->SetLineColor(kBlack);
-      mul_d[t][c][0]->SetLineColor(kGreen+2);
-      mul_d[t][c][1]->SetLineColor(kOrange+7);
-      mul_d[t][c][2]->SetLineColor(kRed);
-      mul_d[t][c][3]->SetLineColor(kBlue);
-      mul_d[t][c][4]->SetLineColor(kBlack);
-      fac_d[t][c][0]->SetLineColor(kGreen+2);
-      fac_d[t][c][1]->SetLineColor(kOrange+7);
-      fac_d[t][c][2]->SetLineColor(kRed);
-      fac_d[t][c][3]->SetLineColor(kBlue);
-      fac_d[t][c][4]->SetLineColor(kBlack);
+      if(!strcmp(var,"bx"))
+      {
+        for(Int_t s=0; s<4; s++)
+        {
+          raw_d[t][c][s]->SetFillColor(kBlue);
+          acc_d[t][c][s]->SetFillColor(kBlue);
+          mul_d[t][c][s]->SetFillColor(kBlue);
+          fac_d[t][c][s]->SetFillColor(kBlue);
+          raw_d[t][c][s]->SetLineColor(kBlue);
+          acc_d[t][c][s]->SetLineColor(kBlue);
+          mul_d[t][c][s]->SetLineColor(kBlue);
+          fac_d[t][c][s]->SetLineColor(kBlue);
+        };
+        raw_d[t][c][4]->SetFillColor(kBlack);
+        acc_d[t][c][4]->SetFillColor(kBlack);
+        mul_d[t][c][4]->SetFillColor(kBlack);
+        fac_d[t][c][4]->SetFillColor(kBlack);
+        raw_d[t][c][4]->SetLineColor(kBlack);
+        acc_d[t][c][4]->SetLineColor(kBlack);
+        mul_d[t][c][4]->SetLineColor(kBlack);
+        fac_d[t][c][4]->SetLineColor(kBlack);
+      }
+      else
+      {
+        raw_d[t][c][0]->SetLineColor(kGreen+2);
+        raw_d[t][c][1]->SetLineColor(kOrange+7);
+        raw_d[t][c][2]->SetLineColor(kRed);
+        raw_d[t][c][3]->SetLineColor(kBlue);
+        raw_d[t][c][4]->SetLineColor(kBlack);
+        acc_d[t][c][0]->SetLineColor(kGreen+2);
+        acc_d[t][c][1]->SetLineColor(kOrange+7);
+        acc_d[t][c][2]->SetLineColor(kRed);
+        acc_d[t][c][3]->SetLineColor(kBlue);
+        acc_d[t][c][4]->SetLineColor(kBlack);
+        mul_d[t][c][0]->SetLineColor(kGreen+2);
+        mul_d[t][c][1]->SetLineColor(kOrange+7);
+        mul_d[t][c][2]->SetLineColor(kRed);
+        mul_d[t][c][3]->SetLineColor(kBlue);
+        mul_d[t][c][4]->SetLineColor(kBlack);
+        fac_d[t][c][0]->SetLineColor(kGreen+2);
+        fac_d[t][c][1]->SetLineColor(kOrange+7);
+        fac_d[t][c][2]->SetLineColor(kRed);
+        fac_d[t][c][3]->SetLineColor(kBlue);
+        fac_d[t][c][4]->SetLineColor(kBlack);
+      };
       for(Int_t s=0; s<5; s++)
       {
         raw_d[t][c][s]->GetXaxis()->SetLabelSize(0.08);
@@ -625,6 +672,17 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
             R_d[t][c][r]->SetBinContent(b,rrr[r]);
             R_d[t][c][r]->SetBinError(b,err_d[t][c][r]->GetBinContent(b));
           };
+        }
+        else if(t==2 && c==2)
+        {
+          for(Int_t r=1; r<=9; r++)
+          {
+            // for VPDX, if zero counts in a bin, set rellum=1 with large error bars;
+            // (see err_d above for how we set the error bars to be large)
+            // these runs will need to be manually marked as inconsistent in combineAll.C
+            R_d[t][c][r]->SetBinContent(b,1);
+            R_d[t][c][r]->SetBinError(b,err_d[t][c][r]->GetBinContent(b));
+          };
         };
       };
     };
@@ -689,20 +747,27 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
     for(Int_t r=1; r<10; r++)
     {
       sprintf(mean_R_n[t][r],"mean_R%d_%s",r,tbit[t]);
-      sprintf(mean_R_t[t][r],"mean R%d for %s over e,w,x",r,tbit[t]);
+      if(t!=2) sprintf(mean_R_t[t][r],"mean R%d for %s over e,w,x",r,tbit[t]);
+      else sprintf(mean_R_t[t][r],"R%d for %sx",r,tbit[t]); // mean VPD rellum title
       mean_R[t][r] = new TH1D(mean_R_n[t][r],mean_R_t[t][r],var_bins,var_l,var_h);
       for(Int_t b=1; b<=var_bins; b++)
       {
         ave=0;
-        for(Int_t c=0; c<3; c++) ave += R_d[t][c][r]->GetBinContent(b);
-        ave /= 3.0;
+        if(t!=2)
+        {
+          for(Int_t c=0; c<3; c++) ave += R_d[t][c][r]->GetBinContent(b);
+          ave /= 3.0;
+        }
+        else ave = R_d[t][2][r]->GetBinContent(b); // set VPD rellum mean equal to VPDX rellum
         mean_R[t][r]->SetBinContent(b,ave);
 
         // propagate error bars into mean -- FORMULA
         unc_b[0] = err_d[t][0][r]->GetBinContent(b);
         unc_b[1] = err_d[t][1][r]->GetBinContent(b);
         unc_b[2] = err_d[t][2][r]->GetBinContent(b);
-        unc = 1/3.0 * sqrt( pow(unc_b[0],2) + pow(unc_b[1],2) + pow(unc_b[2],2) );
+
+        if(t!=2) unc = 1/3.0 * sqrt( pow(unc_b[0],2) + pow(unc_b[1],2) + pow(unc_b[2],2) );
+        else unc = unc_b[2]; // uncertainty for VPD rellum mean set to uncertainty for VPDX rellum
         mean_R[t][r]->SetBinError(b,unc);
       };
     };
@@ -722,13 +787,15 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
         sprintf(dev_R_n[t][c][r],"dev_R%d_%s%s",r,tbit[t],cbit[c]);
         sprintf(dev_R_t[t][c][r],"deviation = R%d - mean R%d for %s%s",r,r,tbit[t],cbit[c]);
         dev_R[t][c][r] = new TH1D(dev_R_n[t][c][r],dev_R_t[t][c][r],var_bins,var_l,var_h);
-        dev_R[t][c][r]->Add(R_d[t][c][r],mean_R[t][r],1.0,-1.0);
+
+        // no need to compute deviation from mean for VPD, since mean = VPDX rellum
+        if(t!=2) dev_R[t][c][r]->Add(R_d[t][c][r],mean_R[t][r],1.0,-1.0);
       };
     };
   };
   
 
-  // compare zdc and vpd
+  // compare zdc and vpd 
   char D_n[3][10][128]; // [cbit] [rellum]
   char D_t[3][10][256];
   TH1D * D_d[3][10];
@@ -739,7 +806,9 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
       sprintf(D_n[c][r],"delta_zdc%s_vpd%s_%d",cbit[c],cbit[c],r);
       sprintf(D_t[c][r],"R%d(zdc%s) minus R%d(vpd%s) vs %s",r,cbit[c],r,cbit[c],var);
       D_d[c][r] = new TH1D(D_n[c][r],D_t[c][r],var_bins,var_l,var_h);
-      D_d[c][r]->Add(R_d[1][c][r],R_d[2][c][r],1.0,-1.0);
+
+      // only do the calculation for ZDCX - VPDX
+      if(c==2) D_d[c][r]->Add(R_d[1][c][r],R_d[2][c][r],1.0,-1.0);
     };
   };
 
@@ -764,9 +833,13 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
 
       for(Int_t x=0; x<3; x++) SD_d[x][t][r] = new TH1D(SD_n[x][t][r],SD_t[x][t][r],var_bins,var_l,var_h);
       
-      SD_d[0][t][r]->Add(R_d[t][0][r],R_d[t][1][r],1.0,-1.0); // E-W
-      SD_d[1][t][r]->Add(R_d[t][0][r],R_d[t][2][r],1.0,-1.0); // E-X
-      SD_d[2][t][r]->Add(R_d[t][1][r],R_d[t][2][r],1.0,-1.0); // W-X
+      // don't compute this diagnostic for VPD, since we only have VPDX
+      if(t!=2)
+      {
+        SD_d[0][t][r]->Add(R_d[t][0][r],R_d[t][1][r],1.0,-1.0); // E-W
+        SD_d[1][t][r]->Add(R_d[t][0][r],R_d[t][2][r],1.0,-1.0); // E-X
+        SD_d[2][t][r]->Add(R_d[t][1][r],R_d[t][2][r],1.0,-1.0); // W-X
+      };
     };
   };
 
@@ -1074,8 +1147,16 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
       c_raw[t]->GetPad(ccc)->SetGrid(1,1);
       if(drawLog) c_raw[t]->GetPad(ccc)->SetLogy();
       c_raw[t]->cd(ccc);
-      raw_d[t][ccc-1][first_draw]->Draw();
-      for(Int_t s=first_same_draw; s<4; s++) raw_d[t][ccc-1][s]->Draw("same"); 
+      if(!strcmp(var,"bx"))
+      {
+        raw_d[t][ccc-1][first_draw]->Draw("b");
+        for(Int_t s=first_same_draw; s<4; s++) raw_d[t][ccc-1][s]->Draw("bsame"); 
+      }
+      else
+      {
+        raw_d[t][ccc-1][first_draw]->Draw();
+        for(Int_t s=first_same_draw; s<4; s++) raw_d[t][ccc-1][s]->Draw("same"); 
+      };
     };
   };
 

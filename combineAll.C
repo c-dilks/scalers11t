@@ -404,28 +404,28 @@ void combineAll(const char * rdatfile="rdat_i.root", const char * sumfile="sums.
   Float_t d_vz_cc[3];
   Float_t d_xx_cc[3][3];
   Float_t t_tau;
-  d_vz_cc[0] = 0.003; // VPDE - ZDCE
-  d_vz_cc[1] = 0.004; // VPDW - ZDCW
-  d_vz_cc[2] = 0.004; // VPDX - ZDCX
+  //d_vz_cc[0] = 0.003; // VPDE - ZDCE
+  //d_vz_cc[1] = 0.004; // VPDW - ZDCW
+  d_vz_cc[2] = 0.006; // VPDX - ZDCX
   d_xx_cc[0][1] = 0.002; // ZDCE - ZDCW
-  d_xx_cc[0][2] = 0.003;  // VPDE - VPDW
-  d_xx_cc[1][1] = 0.01;  // ZDCE - ZDCX
-  d_xx_cc[1][2] = 0.008;  // VPDE - VPDX
-  d_xx_cc[2][1] = 0.01;  // ZDCW - ZDCX
-  d_xx_cc[2][2] = 0.006;  // VPDW - VPDX
-  t_tau = 1.1;
+  //d_xx_cc[0][2] = 0.003;  // VPDE - VPDW
+  d_xx_cc[1][1] = 0.004;  // ZDCE - ZDCX
+  //d_xx_cc[1][2] = 0.008;  // VPDE - VPDX
+  d_xx_cc[2][1] = 0.005;  // ZDCW - ZDCX
+  //d_xx_cc[2][2] = 0.006;  // VPDW - VPDX
+  //t_tau = 1.1;
 
   printf("\ndiagnostic cuts\n");
-  printf("| VPDE - ZDCE | < %f\n",d_vz_cc[0]);
-  printf("| VPDW - ZDCW | < %f\n",d_vz_cc[1]);
+  //printf("| VPDE - ZDCE | < %f\n",d_vz_cc[0]);
+  //printf("| VPDW - ZDCW | < %f\n",d_vz_cc[1]);
   printf("| VPDX - ZDCX | < %f\n",d_vz_cc[2]);
   printf("| ZDCE - ZDCW | < %f\n",d_xx_cc[0][1]);
-  printf("| VPDE - VPDW | < %f\n",d_xx_cc[0][2]);
+  //printf("| VPDE - VPDW | < %f\n",d_xx_cc[0][2]);
   printf("| ZDCE - ZDCX | < %f\n",d_xx_cc[1][1]);
-  printf("| VPDE - VPDX | < %f\n",d_xx_cc[1][2]);
+  //printf("| VPDE - VPDX | < %f\n",d_xx_cc[1][2]);
   printf("| ZDCW - ZDCX | < %f\n",d_xx_cc[2][1]);
-  printf("| VPDW - VPDX | < %f\n",d_xx_cc[2][2]);
-  printf("t / tau < %f\n",t_tau);
+  //printf("| VPDW - VPDX | < %f\n",d_xx_cc[2][2]);
+  //printf("t / tau < %f\n",t_tau);
 
   // fill tree
   Int_t ent = rdat->GetEntries();
@@ -435,6 +435,7 @@ void combineAll(const char * rdatfile="rdat_i.root", const char * sumfile="sums.
     sums->GetEntry(e);
 
     // diagnostic pass check
+    /*
     if( fabs(d_vz[0]) < d_vz_cc[0] &&
         fabs(d_vz[1]) < d_vz_cc[1] &&
         fabs(d_vz[2]) < d_vz_cc[2] &&
@@ -445,6 +446,11 @@ void combineAll(const char * rdatfile="rdat_i.root", const char * sumfile="sums.
         fabs(d_xx[2][1]) < d_xx_cc[2][1] &&
         fabs(d_xx[2][2]) < d_xx_cc[2][2] &&
         t_sums/tau < t_tau )
+    */
+    if( fabs(d_vz[2]) < d_vz_cc[2] &&
+        fabs(d_xx[0][1]) < d_xx_cc[0][1] &&
+        fabs(d_xx[1][1]) < d_xx_cc[1][1] &&
+        fabs(d_xx[2][1]) < d_xx_cc[2][1] )
     {
       isConsistent=1;
     }

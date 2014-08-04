@@ -1,0 +1,313 @@
+#
+# 110207: changed to route VT201/6 to FO/2 and GLINKOUT/2
+# 110131: routed TCU1IN #13 to GLINKOUT #2 for Joe Steele
+# 110126: routed as requested by Sichterman
+# 110125: routed REVTICKIN to GLINKOUT 1, FANOUT 4, and to TCUOUT 2
+# 110124: set up for boards 1,2,3,4,9,10,11,12
+# 100424: routed TCUIN 9 to Fanout 3 for Zhangbu
+# 100409: routed VT201-8 to Fanout 3 for Jamie
+# 100408: routed VT201-11 to Fanout 3 for Jamie
+# 100401: modified to send VT201-bit7 to Fanout 3 for Jamie
+# 100129: HjC: modified to have 23 bits of TCUR in 3 and 4 with 
+#     16 bits TCU1 + 8 bits TCU2 in 5 and 6 - easier for Jeff
+#     also programmed bd10==bd30 and bd20==bd50
+# Chris Perkins <cwperkins@lbl.gov>
+# 2/20/07
+# This file maps inputs to outputs on the Scaler Router Board.
+# Any InputName or OutputName must also be in the dictionary file
+#   and the InputPin or OutputPin must be a valid pin number
+# Combinations of InputName/InputPin can be repeated as many times
+#   as necessary but there should only be one line for
+#   each OutputName/OutputPin combination (The last one will
+#   take precedence).
+#
+# the mapping is documented in this file
+#  to see the origin on bits from the DSM tree, see trg docs on web
+#
+#  to see definition of TTLIN bits, see TTLIN_defs
+#
+# All pin numbers are numbered starting from 0
+#
+# This file must end with   END   on a line by itself
+#
+#InputName   InputPin   OutputName   OutputPin
+TCU1IN	     0		SCALER10     0
+TCU1IN	     1		SCALER10     1
+TCU1IN	     2		SCALER10     2
+TCU1IN	     3		SCALER10     3
+TCU1IN	     4		SCALER10     4
+TCU1IN	     5		SCALER10     5
+TCU1IN	     6		SCALER10     6
+TCU1IN	     7		SCALER10     7
+TCU1IN	     8		SCALER10     8
+TCU1IN	     9		SCALER10     9
+TCU1IN	     10		SCALER10     10
+TCU1IN	     11		SCALER10     11
+TCU1IN	     12		SCALER10     12
+TCU1IN	     13		SCALER10     13
+TCU1IN	     14		SCALER10     14
+TCU1IN	     15		SCALER10     15
+VT201IN	     0		SCALER10     16
+BX202IN	     0		SCALER10     17
+BX202IN	     1		SCALER10     18
+BX202IN	     2		SCALER10     19
+BX202IN	     3		SCALER10     20
+BX202IN	     4		SCALER10     21
+BX202IN	     5		SCALER10     22
+BX202IN	     6		SCALER10     23
+RCCIN	     0		SCALER10     24
+TCU2IN	     0		SCALER20     0
+TCU2IN	     1		SCALER20     1
+TCU2IN	     2		SCALER20     2
+TCU2IN	     3		SCALER20     3
+TCU2IN	     4		SCALER20     4
+TCU2IN	     5		SCALER20     5
+TCU2IN	     6		SCALER20     6
+TCU2IN	     7		SCALER20     7
+TCU2IN	     8		SCALER20     8
+TCU2IN	     9		SCALER20     9
+TCU2IN	     10		SCALER20     10
+TCU2IN	     11		SCALER20     11
+TCU2IN	     12		SCALER20     12
+TCU2IN	     13		SCALER20     13
+TCU2IN	     14		SCALER20     14
+TCU2IN	     15		SCALER20     15
+VT201IN	     0		SCALER20     16
+BX202IN	     0		SCALER20     17
+BX202IN	     1		SCALER20     18
+BX202IN	     2		SCALER20     19
+BX202IN	     3		SCALER20     20
+BX202IN	     4		SCALER20     21
+BX202IN	     5		SCALER20     22
+BX202IN	     6		SCALER20     23
+RCCIN	     0		SCALER20     24
+VT201IN	     1		SCALER30     0
+VT201IN	     2		SCALER30     1
+VT201IN	     3		SCALER30     2
+VT201IN	     4		SCALER30     3
+VT201IN	     7		SCALER30     4
+VT201IN	     8		SCALER30     5
+VT201IN	     9		SCALER30     6
+VT201IN	     10		SCALER30     7
+ZD101IN	     10		SCALER30     8
+ZD101IN	     11		SCALER30     9
+BB101IN	     14		SCALER30     10
+BB101IN	     15		SCALER30     11
+VT201IN	     0		SCALER30     12
+VT201IN	     0		SCALER30     13
+VT201IN	     11		SCALER30     14
+VT201IN	     6		SCALER30     15
+VT201IN	     0		SCALER30     16
+BX202IN	     0		SCALER30     17
+BX202IN	     1		SCALER30     18
+BX202IN	     2		SCALER30     19
+BX202IN	     3		SCALER30     20
+BX202IN	     4		SCALER30     21
+BX202IN	     5		SCALER30     22
+BX202IN	     6		SCALER30     23
+RCCIN	     0		SCALER30     24
+VT201IN	     1		SCALER40     0
+VT201IN	     2		SCALER40     1
+VT201IN	     3		SCALER40     2
+VT201IN	     4		SCALER40     3
+VT201IN	     7		SCALER40     4
+VT201IN	     8		SCALER40     5
+VT201IN	     9		SCALER40     6
+VT201IN	     10		SCALER40     7
+ZD101IN	     10		SCALER40     8
+ZD101IN	     11		SCALER40     9
+BB101IN	     14		SCALER40     10
+BB101IN	     15		SCALER40     11
+VT201IN	     0		SCALER40     12
+VT201IN	     0		SCALER40     13
+VT201IN	     11		SCALER40     14
+VT201IN	     6		SCALER40     15
+VT201IN	     0		SCALER40     16
+BX202IN	     0		SCALER40     17
+BX202IN	     1		SCALER40     18
+BX202IN	     2		SCALER40     19
+BX202IN	     3		SCALER40     20
+BX202IN	     4		SCALER40     21
+BX202IN	     5		SCALER40     22
+BX202IN	     6		SCALER40     23
+RCCIN	     0		SCALER40     24
+QTSMDIN	     6		SCALER90     0
+QTSMDIN	     7		SCALER90     1
+QTSMDIN	     8		SCALER90     2
+QTSMDIN	     9		SCALER90     3
+QTSMDIN	     10		SCALER90     4
+QTSMDIN	     11		SCALER90     5
+ZD101IN	     0		SCALER90     6
+ZD101IN	     1		SCALER90     7
+ZD101IN	     2		SCALER90     8
+ZD101IN	     12		SCALER90     9
+ZD101IN	     13		SCALER90     10
+ZD101IN	     6		SCALER90     11
+BBCEIN	     3		SCALER90     12
+BBCEIN	     4		SCALER90     13
+BBCEIN	     11		SCALER90     14
+BBCEIN	     12		SCALER90     15
+VT201IN	     0		SCALER90     16
+BX202IN	     0		SCALER90     17
+BX202IN	     1		SCALER90     18
+BX202IN	     2		SCALER90     19
+BX202IN	     3		SCALER90     20
+BX202IN	     4		SCALER90     21
+BX202IN	     5		SCALER90     22
+BX202IN	     6		SCALER90     23
+RCCIN	     0		SCALER90     24
+QTSMDIN	     0		SCALERA0     0
+QTSMDIN	     1		SCALERA0     1
+QTSMDIN	     2		SCALERA0     2
+QTSMDIN	     3		SCALERA0     3
+QTSMDIN	     4		SCALERA0     4
+QTSMDIN	     5		SCALERA0     5
+ZD101IN	     3		SCALERA0     6
+ZD101IN	     4		SCALERA0     7
+ZD101IN	     5		SCALERA0     8
+ZD101IN	     14		SCALERA0     9
+ZD101IN	     15		SCALERA0     10
+ZD101IN	     7		SCALERA0     11
+BBCWIN	     3		SCALERA0     12
+BBCWIN	     4		SCALERA0     13
+BBCWIN	     11		SCALERA0     14
+BBCWIN	     12		SCALERA0     15
+VT201IN	     0		SCALERA0     16
+BX202IN	     0		SCALERA0     17
+BX202IN	     1		SCALERA0     18
+BX202IN	     2		SCALERA0     19
+BX202IN	     3		SCALERA0     20
+BX202IN	     4		SCALERA0     21
+BX202IN	     5		SCALERA0     22
+BX202IN	     6		SCALERA0     23
+RCCIN	     0		SCALERA0     24
+BBCEIN	     0		SCALERB0     0
+BBCEIN	     1		SCALERB0     1
+BBCEIN	     2		SCALERB0     2
+BBCEIN	     3		SCALERB0     3
+BBCEIN	     4		SCALERB0     4
+BBCEIN	     5		SCALERB0     5
+BBCEIN	     6		SCALERB0     6
+BBCEIN	     7		SCALERB0     7
+BBCEIN	     8		SCALERB0     8
+BBCEIN	     9		SCALERB0     9
+BBCEIN	     10		SCALERB0     10
+BBCEIN	     11		SCALERB0     11
+BBCEIN	     12		SCALERB0     12
+BBCEIN	     13		SCALERB0     13
+BBCEIN	     14		SCALERB0     14
+BBCEIN	     15		SCALERB0     15
+VT201IN	     0		SCALERB0     16
+BX202IN	     0		SCALERB0     17
+BX202IN	     1		SCALERB0     18
+BX202IN	     2		SCALERB0     19
+BX202IN	     3		SCALERB0     20
+BX202IN	     4		SCALERB0     21
+BX202IN	     5		SCALERB0     22
+BX202IN	     6		SCALERB0     23
+RCCIN	     0		SCALERB0     24
+BBCWIN	     0		SCALERC0     0
+BBCWIN	     1		SCALERC0     1
+BBCWIN	     2		SCALERC0     2
+BBCWIN	     3		SCALERC0     3
+BBCWIN	     4		SCALERC0     4
+BBCWIN	     5		SCALERC0     5
+BBCWIN	     6		SCALERC0     6
+BBCWIN	     7		SCALERC0     7
+BBCWIN	     8		SCALERC0     8
+BBCWIN	     9		SCALERC0     9
+BBCWIN	     10		SCALERC0     10
+BBCWIN	     11		SCALERC0     11
+BBCWIN	     12		SCALERC0     12
+BBCWIN	     13		SCALERC0     13
+BBCWIN	     14		SCALERC0     14
+BBCWIN	     15		SCALERC0     15
+VT201IN	     0		SCALERC0     16
+BX202IN	     0		SCALERC0     17
+BX202IN	     1		SCALERC0     18
+BX202IN	     2		SCALERC0     19
+BX202IN	     3		SCALERC0     20
+BX202IN	     4		SCALERC0     21
+BX202IN	     5		SCALERC0     22
+BX202IN	     6		SCALERC0     23
+RCCIN	     0		SCALERC0     24
+TTLIN	     0		TCUOUT     0
+TTLIN        0          TCUOUT     1
+REVTICKIN    0		TCUOUT	   2
+GLINKIN      1          TCUOUT     4
+GLINKIN      2          TCUOUT     5
+GLINKIN      3          TCUOUT     6
+GLINKIN      4          TCUOUT     7
+GLINKIN      5          TCUOUT     8
+GLINKIN      9          TCUOUT     9
+GLINKIN      7          TCUOUT     10
+TCURIN	     0		TCUOUT     11
+TCURIN	     1		TCUOUT     12
+TCURIN	     2		TCUOUT     13
+TCURIN	     3		TCUOUT     14
+TCURIN	     4		TCUOUT     15
+RCCIN	     0		FANOUT	     0
+TTLIN	     0		FANOUT	     1
+VT201IN	     6		FANOUT	     2
+RCCIN	     2		FANOUT	     3
+REVTICKIN    0		FANOUT	     4
+REVTICKIN    0		BX201OUT     0
+REVTICKIN    0		BX202OUT     0
+RCCIN	     0		GLINKOUT     0
+REVTICKIN    0		GLINKOUT     1
+VT201IN	     6		GLINKOUT     2
+RCCIN	     0		TESTOUT	     0
+VT201IN	     0		TESTOUT	     1
+BBCEIN	     0		SCALER48LO     0
+BBCEIN	     1		SCALER48LO     1
+BBCEIN	     2		SCALER48LO     2
+BBCEIN	     3		SCALER48LO     3
+BBCEIN	     4		SCALER48LO     4
+BBCEIN	     5		SCALER48LO     5
+BBCEIN	     6		SCALER48LO     6
+BBCEIN	     7		SCALER48LO     7
+BBCEIN	     8		SCALER48LO     8
+BBCEIN	     9		SCALER48LO     9
+BBCEIN	     10		SCALER48LO     10
+BBCEIN	     11		SCALER48LO     11
+BBCEIN	     12		SCALER48LO     12
+BBCEIN	     13		SCALER48LO     13
+BBCEIN	     14		SCALER48LO     14
+BBCEIN	     15		SCALER48LO     15
+VT201IN	     0		SCALER48LO     16
+BX202IN	     0		SCALER48LO     17
+BX202IN	     1		SCALER48LO     18
+BX202IN	     2		SCALER48LO     19
+BX202IN	     3		SCALER48LO     20
+BX202IN	     4		SCALER48LO     21
+BX202IN	     5		SCALER48LO     22
+BX202IN	     6		SCALER48LO     23
+# Last input to SCALER48LO must be run_stop
+RCCIN	     2		SCALER48HI     24
+BBCEIN	     0		SCALER48HI     0
+BBCEIN	     1		SCALER48HI     1
+BBCEIN	     2		SCALER48HI     2
+BBCEIN	     3		SCALER48HI     3
+BBCEIN	     4		SCALER48HI     4
+BBCEIN	     5		SCALER48HI     5
+BBCEIN	     6		SCALER48HI     6
+BBCEIN	     7		SCALER48HI     7
+RCCIN	     1		SCALER48HI     8
+RCCIN	     1		SCALER48HI     9
+RCCIN	     1		SCALER48HI     10
+RCCIN	     1		SCALER48HI     11
+RCCIN	     1		SCALER48HI     12
+RCCIN	     1		SCALER48HI     13
+RCCIN	     1		SCALER48HI     14
+RCCIN	     1		SCALER48HI     15
+RCCIN	     1		SCALER48HI     16
+RCCIN	     1		SCALER48HI     17
+RCCIN	     1		SCALER48HI     18
+# Input 19 to SCALER48HI must be RCC clk
+RCCIN	     0		SCALER48HI     19
+RCCIN	     1		SCALER48HI     20
+RCCIN	     1		SCALER48HI     21
+RCCIN	     1		SCALER48HI     22
+RCCIN	     1		SCALER48HI     23
+RCCIN	     0		SCALER48HI     24
+END

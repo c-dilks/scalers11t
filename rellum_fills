@@ -1,8 +1,8 @@
 #!/bin/bash
 # runs rellum*.C for each fill to look at how bXing distributions change
 
-drawLog=1
-zoomIn=0 
+drawLog=0
+zoomIn=1 
 
 
 cat fill.txt | awk '{print $2}' | uniq > fill_list.txt

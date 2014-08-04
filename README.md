@@ -1,4 +1,4 @@
-RELATIVE LUMINOSITY ANALYSIS
+RELATIVE LUMINOSITY ANALYSIS -- Run 11 pp500 (T)
 ----------------------------
 
 Installation
@@ -16,48 +16,36 @@ Analysis Procedure
 ------------------
 1. Download scaler files from HPSS
 
-  - 2013 instructions
-    - code contained in "hpss" subdirectory locally; on rcas found in ~/scalers2013
-      - "BuildList" uses goodruns.dat (see trgmon code) to build a list of
-        scaler files to retrieve from HPSS; the variable "size" controls
-        how many scaler files will be listed in each HPSS request list
-        - note that a board number is needed; see usage note
-        - the target is set to $HOME/scratch/sca$YEAR/...
-      - run "hpss_user.pl -f [request list]" to add the list of files
-        and respective targets to the HPSS request queue and wait
-      - monitor status with "hpss_user.pl -w"
-  - 2012 instructions
-    - scaler files on HPSS for run12 were saved including a UNIX timestamp, which
+  - 2011 instructions
+    - need runlist; I didn't do run QA for run11, so I wrote a couple short scripts
+      to extract the run number and fill numbers present in the available output
+      files; run "../../get_run_list.C" followed by "../../append_fill_numbers";
+      the file "runlist_with_fills" can be copied to "scalers11t/goodruns.dat"
+      (and to wherever you need it in order to download the scaler files)
+    - scaler files on HPSS for run11 were saved including a UNIX timestamp, which
       makes it difficult to generate a list of files
     - first, type "hsi" and cd to /home/starsink/raw/daq/2012
     - then type "out > FILE_LIST"; this will create a file called "FILE_LIST" in 
       your current local (RCAS) directory and pipe all output from hsi to this file
-    - run12 rellum uses board 12 data, so to list all the board 12 scaler files, type
-      "ls */*/*_12_*.sca" and be patient 
+    - run11 rellum uses board 3&4 data, so, for example,  to list all the board 3 scaler files,
+      type "ls */*/*_3_*.sca" and be patient 
     - when the command is done, exit HPSS and check FILE_LIST for the proper output
-    - execute BuildList_2012 to build lists of files to submit to the data carousel; 
+    - execute BuildList_2011 to build lists of files to submit to the data carousel; 
       files_to_retrieve*.lst will be created, with 150 requests per file
       - submit using "hpss_user.pl -f [list]"
       - check carousel status using "hpss_user.pl -w"
 
 
 2. Read the scalers scaler bit reader reader from Zilong
-   (32-bit for run13 and 24-bit for run12)
 
-  - 32-bit scaler reader (for 2013)
-    (obtained from ~zchang/2013-03-scaler/codes_scaler/MyCodes/scaler2_reader_bit.c)
-    - read_scalers in scalers13 directory executes scaler2_reader_bit.exe via condor
-      - reads all scaler files in /GreyDisk1/sca2013
-      - outputs the read files in datfiles directory
-      - explanation of scaler2_reader_bit.exe (see make file for compilation)
-        - reads 32-bit scaler files obtained from hpss (downloaded to /GreyDisk1/sca2013)
-        - outputs corresponding file in datfiles directory with the following columns:
-          - bunch crossing (bXing) number
-          - BBC[0-7] (see zilong's scaler bit definitions below)
-          - ZDC[0-7] 
-          - VPD[0-3]
-          - total bXings
-  - 24-bit scaler reader (for 2012)
+  - 24-bit scaler reader
+    - since we have the choice of using board 3 or 4, we select one
+      by passing a board number to "read_scalers"
+    - before running this, make two directories: datfiles_bd3 and datfiles_bd4;
+      make "datfiles" a symlink to the directory that corresponds to the board
+      you're analyzing; this symlink should remain unchanged throughout the rest of the
+      analysis (in other words, to change board number, you must redo the analysis
+      starting from the datfiles)
     - read_scalers in scalers12 directory executes sca_read_bin.o via condor
       - reads all scaler files in /GreyDisk1/sca2012
       - outputs the read files in datfiles directory
@@ -67,6 +55,10 @@ Analysis Procedure
         - ZDC[0-7] 
         - VPD[0-7]
         - total bXings
+  - see bit_doc.txt for further information
+  - if there are multiple scaler files for a run (board 4 seems to read out 
+    every 1,000 seconds), you can run datadd to add the columns of each run;
+    the original, un-added datfiles are backed up into datfiles/orig
 
 
 3. Obtain spin patterns
@@ -81,18 +73,13 @@ Analysis Procedure
       - cat $FMSTXT/fill.txt | uniq > $FMSTXT/fill.tmp
       - mv $FMSTXT/fill.{tmp,txt}
     - copy downloaded spinpats to $FMSTXT/spinpat/
-  - SEE SPECIAL NOTE BELOW REGARDING F17600
   - run spin_cogging to create spinpat/[fill].spin files from the downloaded CDEV files
     - since STAR spin is opposite source spin and source spin is same as CDEV spin,
       this script implements a sign flip
-  - SPECIAL NOTE F17600: I ran a modifier script called mod_17600
-    to fix spin pattern for this fill.. see the comments in the
-    script for further details; the cdev file is the modified 
-    spin pattern for the last 14 runs (*.bad files for the unmodified 
-    pattern, where the runs should be omitted from analyses)
 
 
 4. Accumulate the scaler data into one table: "run accumulate"
+  - 2011 NOTE: SOME RUNS HAD ZERO VPDX; they were relocated to datfiles/missing_vpdx
 
   - bunch kicking: you must first generate a list of kicked bunches using "bunch_kicker",
     if one does not exist; the list is in the text file "kicked", with columns
@@ -130,8 +117,6 @@ Analysis Procedure
         certain bunches which are empty according to scalers but filled according to
         cdev are labelled as 'kicked' in the output tree; bXings which are kicked
         are not projected to any distributions in the rellum4 output
-  - can run "print_run_table.dat" to print a table containing the columns
-    [run index] [run number] [fill index] [fill number]
         
 
 5. Compute the relative luminosity
@@ -177,6 +162,7 @@ Analysis Procedure
       run time; the slope of a linear fit to this should equal unity
   - run combineAll.C, which combines sums.root and rdat_i.root into a final tree, which
     can then be passed to asymmetry analysis code
+  - run "make_run_list.C" to make list of run numbers & run indices
 
 
 Spinbit Equalizing Running 

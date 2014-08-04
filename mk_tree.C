@@ -127,9 +127,9 @@ void mk_tree(const char * acc_file="datfiles/acc.dat")
     zdcw = zdc[2] + zdc[3] + zdc[6] + zdc[7]; // w + we + xw + xwe
     zdcx = zdc[3] + zdc[7]; // we + xwe
     
-    vpde = vpd[1] + vpd[3] + vpd[5] + vpd[7]; // e + we + xe + xwe
-    vpdw = vpd[2] + vpd[3] + vpd[6] + vpd[7]; // w + we + xw + xwe
-    vpdx = vpd[3] + vpd[7]; // we + xwe
+    vpde = 0;
+    vpdw = 0;
+    vpdx = vpd[4]; // x (only vpdx is available)
 
 
     // KICKED BUNCHES

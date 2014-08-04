@@ -23,7 +23,7 @@ int main(int argc, char * argv[])
     };
   };
   int runnum, boardnum, unixtime;
-  sscanf(filename,"sca2012t/run%d_%d_%d.sca",&runnum,&boardnum,&unixtime);
+  sscanf(filename,"sca2011t/bd%d/run%d_%d_%d.sca",&boardnum,&runnum,&boardnum,&unixtime);
   printf("reading %s\n",filename);
   printf("runnum=%d\nboard=%d\n",runnum,boardnum);
 
@@ -57,29 +57,32 @@ int main(int argc, char * argv[])
     {
       bx = (chn>>17) & 0x7F; // mask bits 17-23
       chn = chn & 0x1FFFF;   // mask bits 0-16
-      cBBC = chn & 0x1C000;  // mask bits 14-16
-      cZDC = chn & 0xE00;    // mask bits 9-11
-      cVPD = chn & 0x7;      // mask bits 0-2
+
+      cBBC = ((chn>>10)&0x3) | ((chn>>14)&0x4); // BBC [XWE]
+      cZDC = ((chn>>8)&0x3) | ((chn>>13)&0x4);  // ZDC [XWE]
+      cVPD = (chn>>12)&0x4; // ZDC [XWE] (note: no singles bits)
+
+      //printf("chn=%x cBBC=%x cZDC=%x cVPD=%x\n",chn,cBBC,cZDC,cVPD);
 
       if(bx>=0 && bx<=119)
       {
         if( cBBC == 0x0 ) BBC[0][bx]+=val;
-        else if( cBBC == 0x04000) BBC[1][bx]+=val;
-        else if( cBBC == 0x08000) BBC[2][bx]+=val;
-        else if( cBBC == 0x0C000) BBC[3][bx]+=val;
-        else if( cBBC == 0x10000) BBC[4][bx]+=val;
-        else if( cBBC == 0x14000) BBC[5][bx]+=val;
-        else if( cBBC == 0x18000) BBC[6][bx]+=val;
-        else if( cBBC == 0x1C000) BBC[7][bx]+=val;
+        else if( cBBC == 0x1 ) BBC[1][bx]+=val;
+        else if( cBBC == 0x2 ) BBC[2][bx]+=val;
+        else if( cBBC == 0x3 ) BBC[3][bx]+=val;
+        else if( cBBC == 0x4 ) BBC[4][bx]+=val;
+        else if( cBBC == 0x5 ) BBC[5][bx]+=val;
+        else if( cBBC == 0x6 ) BBC[6][bx]+=val;
+        else if( cBBC == 0x7 ) BBC[7][bx]+=val;
 
         if( cZDC == 0x0 ) ZDC[0][bx]+=val;
-        else if( cZDC == 0x200) ZDC[1][bx]+=val;
-        else if( cZDC == 0x400) ZDC[2][bx]+=val;
-        else if( cZDC == 0x600) ZDC[3][bx]+=val;
-        else if( cZDC == 0x800) ZDC[4][bx]+=val;
-        else if( cZDC == 0xA00) ZDC[5][bx]+=val;
-        else if( cZDC == 0xC00) ZDC[6][bx]+=val;
-        else if( cZDC == 0xE00) ZDC[7][bx]+=val;
+        else if( cZDC == 0x1 ) ZDC[1][bx]+=val;
+        else if( cZDC == 0x2 ) ZDC[2][bx]+=val;
+        else if( cZDC == 0x3 ) ZDC[3][bx]+=val;
+        else if( cZDC == 0x4 ) ZDC[4][bx]+=val;
+        else if( cZDC == 0x5 ) ZDC[5][bx]+=val;
+        else if( cZDC == 0x6 ) ZDC[6][bx]+=val;
+        else if( cZDC == 0x7 ) ZDC[7][bx]+=val;
 
         if( cVPD == 0x0 ) VPD[0][bx]+=val;
         else if( cVPD == 0x1 ) VPD[1][bx]+=val;

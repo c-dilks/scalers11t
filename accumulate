@@ -11,7 +11,9 @@ rm $dir/*.tmp
 
 # build fill_time.txt from goodruns.dat
 echo "building fill_time.txt..."
-awk '{print $1" "$3" "$4}' < goodruns.dat > fill_time.txt
+#awk '{print $1" "$3" "$4}' < goodruns.dat > fill_time.txt
+# CHEATING: MAKING TIME EQUAL TO FILL NUMBER; FIX THIS!!!!!!!!!!!!!!!!!
+awk '{print $1" "$2" "$2}' < goodruns.dat > fill_time.txt
 
 
 

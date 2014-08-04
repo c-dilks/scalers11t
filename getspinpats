@@ -2,7 +2,7 @@
 # fetch spin pattern files from cdev using goodruns.dat
 
 # build fill.txt
-awk '{print $1" "$3}' < goodruns.dat > fill.txt
+awk '{print $1" "$2}' < goodruns.dat > fill.txt
 
 SPINPAT=spinpat
 FILLFILE=$(pwd)/fill.txt
@@ -25,9 +25,9 @@ while read line; do
       echo "[***] already have spinpat F$FILL"
     else
       wget -nc \
-        http://online.star.bnl.gov/cdev2012/fillHistory/F$FILL/$BLUENAME
+        http://online.star.bnl.gov/cdev2011/fillHistory/F$FILL/$BLUENAME
       wget -nc \
-        http://online.star.bnl.gov/cdev2012/fillHistory/F$FILL/$YELLNAME
+        http://online.star.bnl.gov/cdev2011/fillHistory/F$FILL/$YELLNAME
       if [ -e $BLUENAME -a -e $YELLNAME ]; then
         mv -v $BLUENAME ${BLUENAMEOUT}${FILL}.dat
         mv -v $YELLNAME ${YELLNAMEOUT}${FILL}.dat

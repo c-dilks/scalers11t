@@ -1,9 +1,16 @@
 #!/bin/bash
 # reads all scalers in a condor job
 
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 [board]"
+  exit
+else
+  bd=$1
+fi
+
 f="reader.bat"
-outdir="datfiles"
-indir="sca2012t"
+outdir="datfiles_bd$bd"
+indir="sca2011t/bd$bd"
 
 echo "Executable = sca_read_bin.o" > $f
 echo "Universe = vanilla" >> $f
@@ -18,9 +25,10 @@ rm log/*
 for file in $(ls $indir); do
   echo "Arguments = $indir/$file" >> $f
   runnum=$(echo $file | cut -c4-11)
-  echo "Log = log/run$runnum.log" >> $f
-  echo "Output = log/run$runnum.out" >> $f
-  echo "Error = log/run$runnum.err" >> $f
+  logname=$(echo $file | sed 's/\.sca//g')
+  echo "Log = log/${logname}.log" >> $f
+  echo "Output = log/${logname}.out" >> $f
+  echo "Error = log/${logname}.err" >> $f
   echo "Queue" >> $f
   echo >> $f
 done
