@@ -365,14 +365,15 @@ void rellum4(const char * var="i",Bool_t printPNGs=0,
           {
             pp[t][0][s] = (nn[t][0][s] - nn[t][2][s]) / (tt[s] - nn[t][1][s]);
             pp[t][1][s] = (nn[t][1][s] - nn[t][2][s]) / (tt[s] - nn[t][0][s]);
+            pp[t][2][s] = (nn[t][2][s] - (nn[t][0][s]*nn[t][1][s])/tt[s]) /
+                          (tt[s] + nn[t][2][s] - nn[t][0][s] - nn[t][1][s]);
           }
           else
           {
-            pp[t][0][s] = 0;
-            pp[t][1][s] = 0;
+            pp[t][0][s] = 0; // no VPDE data available
+            pp[t][1][s] = 0; // no VPDW data available
+            pp[t][2][s] = nn[t][2][s] / tt[s]; // do not apply VPDX accidentals  correction
           };
-          pp[t][2][s] = (nn[t][2][s] - (nn[t][0][s]*nn[t][1][s])/tt[s]) /
-                        (tt[s] + nn[t][2][s] - nn[t][0][s] - nn[t][1][s]);
 
           // compute accidentals and multiples corrections and fill corrected dists
           for(Int_t c=0; c<3; c++)
