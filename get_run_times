@@ -1,0 +1,30 @@
+#!/bin/bash
+# generates list of run numbers, fill numbers, and run times using "goodruns.dat"
+# output file is "fill_time.txt", which is then used by "accumulate" in rellum analysis
+
+first=$(head -n1 goodruns.dat | awk '{print $1}')
+last=$(tail -n1 goodruns.dat | awk '{print $1}')
+
+echo "downloading run times from database..."
+mysql --host dbbak.starp.bnl.gov --port 3410 RunLog -e\
+  "SELECT runNumber,startRunTime,endRunTime FROM runDescriptor WHERE runNumber >= $first AND runNumber <= $last "\
+  > run_times.dat
+
+> fill_time.txt
+ii=1
+while read line; do
+  if [ $ii -eq 1 ]; then
+    ii=0 # (ignore first line, which are column headers)
+  else
+    run=$(echo $line | awk '{print $1}')
+    st=$(echo $line | awk '{print $2}')
+    en=$(echo $line | awk '{print $3}')
+    fill=$(grep $run goodruns.dat | awk '{print $2}')
+    t=$(echo "$en - $st" | bc)
+    if [ -n "$fill" ]; then
+      echo $run $fill $t >> fill_time.txt
+      echo $run $st $en $fill $t
+    fi
+  fi
+done < run_times.dat
+rm run_times.dat
