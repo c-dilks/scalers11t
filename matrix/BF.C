@@ -448,11 +448,11 @@ void BF(const char * var="mul",
   TH1D * asym_dist[4]; // [asym]
   char asym_dist_n[4][16];
   char asym_dist_t[4][64];
-  sprintf(asym_dist_t[1],"%s%s A_{L}^{Y} w.r.t. %s%s vs. run index",
+  sprintf(asym_dist_t[1],"%s%s R^{Y} w.r.t. %s%s vs. run index",
     tbit_s[numer_tbit],cbit_s[numer_cbit],tbit_s[denom_tbit],cbit_s[denom_cbit]);
-  sprintf(asym_dist_t[2],"%s%s A_{L}^{B} w.r.t. %s%s vs. run index",
+  sprintf(asym_dist_t[2],"%s%s R^{B} w.r.t. %s%s vs. run index",
     tbit_s[numer_tbit],cbit_s[numer_cbit],tbit_s[denom_tbit],cbit_s[denom_cbit]);
-  sprintf(asym_dist_t[3],"%s%s A_{LL} w.r.t. %s%s vs. run index",
+  sprintf(asym_dist_t[3],"%s%s A_{#Sigma} w.r.t. %s%s vs. run index",
     tbit_s[numer_tbit],cbit_s[numer_cbit],tbit_s[denom_tbit],cbit_s[denom_cbit]);
   Float_t b_pol_use,y_pol_use,b_pol_e_use,y_pol_e_use;
   Double_t bc,be,asymmetry,asymmetry_e;
